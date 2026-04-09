@@ -1,4 +1,4 @@
--- Active: 1774562919020@@127.0.0.1@5432@olist
+-- Active: 1775671857494@@127.0.0.1@5432@olist
 -- ============================================================
 -- SETUP: Brazilian E-Commerce Public Dataset by Olist
 -- Fuente: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
@@ -48,7 +48,7 @@ DROP TABLE IF EXISTS olist_customers_dataset;
 
 -- Clientes
 CREATE TABLE olist_customers_dataset (
-    customer_id               VARCHAR(50) PRIMARY KEY,
+    customer_id               VARCHAR(50),
     customer_unique_id        VARCHAR(50) NOT NULL,
     customer_zip_code_prefix  VARCHAR(10),
     customer_city             VARCHAR(80),
@@ -57,7 +57,7 @@ CREATE TABLE olist_customers_dataset (
 
 -- Vendedores
 CREATE TABLE olist_sellers_dataset (
-    seller_id                 VARCHAR(50) PRIMARY KEY,
+    seller_id                 VARCHAR(50),
     seller_zip_code_prefix    VARCHAR(10),
     seller_city               VARCHAR(80),
     seller_state              CHAR(2)
@@ -65,15 +65,14 @@ CREATE TABLE olist_sellers_dataset (
 
 -- Traducción de categorías
 CREATE TABLE product_category_name_translation (
-    product_category_name         VARCHAR(100) PRIMARY KEY,
+    product_category_name         VARCHAR(100),
     product_category_name_english VARCHAR(100)
 );
 
 -- Productos
 CREATE TABLE olist_products_dataset (
-    product_id                   VARCHAR(50) PRIMARY KEY,
-    product_category_name        VARCHAR(100)
-        REFERENCES product_category_name_translation(product_category_name),
+    product_id                   VARCHAR(50),
+    product_category_name        VARCHAR(100),
     product_name_lenght          INT,
     product_description_lenght   INT,
     product_photos_qty           INT,
@@ -85,9 +84,8 @@ CREATE TABLE olist_products_dataset (
 
 -- Órdenes
 CREATE TABLE olist_orders_dataset (
-    order_id                        VARCHAR(50) PRIMARY KEY,
-    customer_id                     VARCHAR(50)
-        REFERENCES olist_customers_dataset(customer_id),
+    order_id                        VARCHAR(50),
+    customer_id                     VARCHAR(50),
     order_status                    VARCHAR(20),
     order_purchase_timestamp        TIMESTAMP,
     order_approved_at               TIMESTAMP,
@@ -98,41 +96,33 @@ CREATE TABLE olist_orders_dataset (
 
 -- Items de cada orden
 CREATE TABLE olist_order_items_dataset (
-    order_id              VARCHAR(50)
-        REFERENCES olist_orders_dataset(order_id),
+    order_id              VARCHAR(50),
     order_item_id         INT,
-    product_id            VARCHAR(50)
-        REFERENCES olist_products_dataset(product_id),
-    seller_id             VARCHAR(50)
-        REFERENCES olist_sellers_dataset(seller_id),
+    product_id            VARCHAR(50),
+    seller_id             VARCHAR(50),
     shipping_limit_date   TIMESTAMP,
     price                 NUMERIC(10,2),
-    freight_value         NUMERIC(10,2),
-    PRIMARY KEY (order_id, order_item_id)
+    freight_value         NUMERIC(10,2)
 );
 
 -- Pagos
 CREATE TABLE olist_order_payments_dataset (
-    order_id              VARCHAR(50)
-        REFERENCES olist_orders_dataset(order_id),
+    order_id              VARCHAR(50),
     payment_sequential    INT,
     payment_type          VARCHAR(30),
     payment_installments  INT,
-    payment_value         NUMERIC(10,2),
-    PRIMARY KEY (order_id, payment_sequential)
+    payment_value         NUMERIC(10,2)
 );
 
 -- Reseñas
 CREATE TABLE olist_order_reviews_dataset (
     review_id               VARCHAR(50),
-    order_id                VARCHAR(50)
-        REFERENCES olist_orders_dataset(order_id),
+    order_id                VARCHAR(50),
     review_score            SMALLINT CHECK (review_score BETWEEN 1 AND 5),
     review_comment_title    TEXT,
     review_comment_message  TEXT,
     review_creation_date    TIMESTAMP,
-    review_answer_timestamp TIMESTAMP,
-    PRIMARY KEY (review_id, order_id)
+    review_answer_timestamp TIMESTAMP
 );
 
 
