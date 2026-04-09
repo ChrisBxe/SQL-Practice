@@ -32,6 +32,20 @@
 -- Columnas esperadas: seller_id, seller_state, total_revenue, revenue_rank
 
 -- SOLUCIÓN:
+SELECT 
+    ooid.seller_id,
+    osd.seller_state,
+    SUM(price) as total_revenue,
+    ROW_NUMBER() OVER(ORDER BY SUM(price) DESC) as revenue_rank
+FROM olist_order_items_dataset AS ooid
+JOIN olist_sellers_dataset AS osd
+ON ooid.seller_id = osd.seller_id
+JOIN olist_orders_dataset AS ood
+ON ooid.order_id = ood.order_id
+WHERE order_status = 'delivered'
+GROUP BY ooid.seller_id, osd.seller_state
+ORDER BY total_revenue DESC
+LIMIT 20;
 
 
 -- ============================================================
@@ -39,10 +53,22 @@
 -- Ejercicio 2
 -- Mismo ranking de vendedores por revenue, pero usa RANK
 -- en lugar de ROW_NUMBER.
--- Identifica en un comentario: ¿hay vendedores con el mismo
--- revenue exacto? ¿Cómo afecta eso al resultado?
 
 -- SOLUCIÓN:
+SELECT 
+    ooid.seller_id,
+    osd.seller_state,
+    SUM(price) as total_revenue,
+    RANK() OVER(ORDER BY SUM(price) DESC) as revenue_rank
+FROM olist_order_items_dataset AS ooid
+JOIN olist_sellers_dataset AS osd
+ON ooid.seller_id = osd.seller_id
+JOIN olist_orders_dataset AS ood
+ON ooid.order_id = ood.order_id
+WHERE order_status = 'delivered'
+GROUP BY ooid.seller_id, osd.seller_state
+ORDER BY total_revenue DESC
+LIMIT 20;
 
 
 -- ============================================================
@@ -77,7 +103,6 @@
 -- al mismo cliente a través de múltiples órdenes.
 
 -- SOLUCIÓN:
-
 
 -- ============================================================
 
