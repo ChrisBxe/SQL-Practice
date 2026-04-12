@@ -83,10 +83,23 @@ LIMIT 20;
 --                     total_revenue, rank_in_category
 
 -- SOLUCIÓN:
-
+SELECT *
+FROM (SELECT
+        pnt.product_category_name_english,
+        op.product_id,
+        SUM(price) AS total_revenue,
+        DENSE_RANK() OVER(PARTITION BY pnt.product_category_name_english
+                            ORDER BY SUM(price) DESC) AS rank_in_category
+    FROM olist_products_dataset as op
+    FULL JOIN olist_order_items_dataset as ooi
+        ON op.product_id = ooi.product_id
+    FULL JOIN product_category_name_translation as pnt
+        ON op.product_category_name = pnt.product_category_name
+    GROUP BY pnt.product_category_name_english, op.product_id
+    )
+WHERE rank_in_category <= 3;
 
 -- ============================================================
-
 
 -- ------------------------------------------------------------
 -- SECCIÓN · LAG y LEAD
